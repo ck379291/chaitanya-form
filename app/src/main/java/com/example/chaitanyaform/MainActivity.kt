@@ -1,6 +1,8 @@
 package com.example.chaitanyaform
 
+import android.content.Intent
 import android.os.Bundle
+import android.os.PersistableBundle
 import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -17,114 +19,114 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.view.menu.MenuBuilder
 import com.example.chaitanyaform.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), View.OnClickListener,RadioGroup.OnCheckedChangeListener,
 CompoundButton.OnCheckedChangeListener{
     private lateinit var binding: ActivityMainBinding
     val list: ArrayList<String> = ArrayList()
-    private val isChecked:Boolean = false
-    private var txtGender: String? = null
-    private var music :String? =null
-    private var Programming :String?=null
-    private var cricket :String?=null
-    private  var Nobel  :String?=null
+    var gender:String?=null
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.menu_main,menu)
 
-
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding= ActivityMainBinding.inflate(layoutInflater)
+        setContentView(R.layout.activity_main)
+        binding=ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         binding.buttonFirst.setOnClickListener(this)
+        binding.radiogroup.setOnCheckedChangeListener(this)
+        binding.cricket.setOnCheckedChangeListener(this)
+        binding.programming.setOnCheckedChangeListener(this)
+        binding.music.setOnCheckedChangeListener(this)
+        binding.nobel.setOnCheckedChangeListener(this)
 
-
-
-
-        }
-
+    }
     override fun onClick(view: View?) {
         when(view?.id){
-            R.id.button_first->{
-                if (binding.firstnmae.text.isEmpty() && binding.lastname.text.isEmpty() && binding.mobilenumber.text.isEmpty()
-                    && binding.alternativemobilenumber.text.isEmpty() && binding.email.text.isEmpty() ){
-                    Toast.makeText(this,"fill all the require feild",Toast.LENGTH_SHORT).show()
+            R.id.button_first ->{
+                if (binding.firstnmae.text!!.isEmpty() && binding.lastname.text!!.isEmpty() && binding.mobilenumber.editableText!!.isEmpty()
+                    && binding.alternativemobilenumber.editableText!!.isEmpty()  && binding.email.text.isEmpty() ){
+                    binding.firstnmae.requestFocus()
+                    Toast.makeText(this,"fill all the information", Toast.LENGTH_SHORT).show()
+
+                }
+                else if (binding.firstnmae.text.isEmpty()){
+                    binding.firstnmae.requestFocus()
+                    Toast.makeText(this,"Your first name is missing",Toast.LENGTH_SHORT).show()
                 }
                 else if (binding.lastname.text.isEmpty()){
                     binding.lastname.requestFocus()
-                    Toast.makeText(this,"enter your first name",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Your last name is missing",Toast.LENGTH_SHORT).show()
                 }
-                else if (binding.mobilenumber.text.isEmpty()){
+                else if (binding.mobilenumber.editableText.isEmpty()){
                     binding.mobilenumber.requestFocus()
-                    Toast.makeText(this,"enter your first name",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Your mobile name is missing",Toast.LENGTH_SHORT).show()
                 }
-                else if (binding.alternativemobilenumber.text.isEmpty()){
+                else if (binding.alternativemobilenumber.editableText.isEmpty()){
                     binding.alternativemobilenumber.requestFocus()
-                    Toast.makeText(this,"enter your first name",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Your Alternative mobile name  is missing",Toast.LENGTH_SHORT).show()
                 }
                 else if (binding.email.text.isEmpty()){
                     binding.email.requestFocus()
-                    Toast.makeText(this,"enter your first name",Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"Your email Address is missing",Toast.LENGTH_SHORT).show()
                 }
-                else{
-                    val Firstname=binding.firstnmae.text.toString()
-                    val Lastname=binding.lastname.text.toString()
-                    val Mobilenumber=binding.mobilenumber.text.toString()
-                    val Alternative=binding.alternativemobilenumber.text.toString()
-                    val  Email=binding.email.text.toString()
-                    binding.output.text=" Your name:$Firstname $Lastname \n Phone N" +
-                            "umber:- $Mobilenumber \n Alternative number :$Alternative" +
-                            "\n Email :$Email"
+                else if (binding.firstnmae.text!!.isNotEmpty() && binding.lastname.text!!.isNotEmpty() &&binding.mobilenumber.editableText.isNotEmpty() && binding.alternativemobilenumber.editableText.isNotEmpty() && binding.email.text!!.isNotEmpty() ){
+                    val intent=Intent(this,useroutput::class.java)
+                    val ufirstname=binding.firstnmae.editableText.toString()
+                    val ulastname=binding.lastname.editableText.toString()
+                    val umobileNumber=binding.mobilenumber.editableText.toString()
+                    val ualternativenumber=binding.alternativemobilenumber.editableText.toString()
+                    val uemailaddress=binding.email.editableText.toString()
+                    val lst=list.toString().replace("["," ").replace("]"," ")
+                    intent.putExtra("firstname",ufirstname)
+                    intent.putExtra("lastname",ulastname)
+                    intent.putExtra("mobile number",umobileNumber )
+                    intent.putExtra("alternative",ualternativenumber)
+                    intent.putExtra("email",uemailaddress)
+                    intent.putExtra("gender",gender)
+                    intent.putExtra("hobbies",lst)
+                    startActivity(intent)
                 }
-
-
             }
-        }
 
+        }
     }
+
+
 
     override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
         when(group?.checkedRadioButtonId){
-            R.id.male->{
-                val rbmale=findViewById<RadioButton>(checkedId)
-                txtGender=rbmale.text.toString()
-                Toast.makeText(this,"male",Toast.LENGTH_SHORT).show()
-                binding.output.text="Gender:$rbmale"
+            R.id.male ->{
+                val Radiomale=findViewById<RadioButton>(checkedId)
+                gender=Radiomale.text.toString()
             }
-            R.id.female->{
-                val rbfemale=findViewById<RadioButton>(checkedId)
-                txtGender=rbfemale.text.toString()
-                Toast.makeText(this,"male",Toast.LENGTH_SHORT).show()
-                binding.output.text="Gender :$rbfemale"
+            R.id.female ->{
+                val Radiofemale=findViewById<RadioButton>(checkedId)
+                gender=Radiofemale.text.toString()
             }
-            R.id.transgender->{
-                val rbtransg=findViewById<RadioButton>(checkedId)
-                txtGender=rbtransg.text.toString()
-                Toast.makeText(this,"transgender",Toast.LENGTH_SHORT).show()
-                binding.output.text="Gender:$rbtransg"
+            R.id.transgender ->{
+                val Radiotrans=findViewById<RadioButton>(checkedId)
+                gender=Radiotrans.text.toString()
             }
         }
 
     }
 
-    override fun onCheckedChanged(buttonView: CompoundButton?, isChecked: Boolean) {
+    override fun onCheckedChanged(buttonView: CompoundButton?,isChecked: Boolean) {
         when(buttonView?.id){
-            R.id.music->{
-                if(binding.music.isChecked){
-                    list.add(binding.music.text.toString())
-                }
-                else{
-                    list.remove(binding.music.text.toString())
-                }
-            }
-            R.id.cricket->{
-                if (binding.music.isChecked){
+            R.id.cricket -> {
+                if (binding.cricket.isChecked){
                     list.add(binding.cricket.text.toString())
                 }
                 else{
                     list.remove(binding.cricket.text.toString())
                 }
             }
-            R.id.programming->{
+            R.id.programming ->{
                 if (binding.programming.isChecked){
                     list.add(binding.programming.text.toString())
                 }
@@ -132,17 +134,27 @@ CompoundButton.OnCheckedChangeListener{
                     list.remove(binding.programming.text.toString())
                 }
             }
+            R.id.music ->{
+                if (binding.music.isChecked){
+                    list.add(binding.music.text.toString())
+                }
+                else{
+                    list.remove(binding.music.text.toString())
+                }
+            }
             R.id.nobel->{
                 if (binding.nobel.isChecked){
                     list.add(binding.nobel.text.toString())
                 }
                 else{
-                    list.remove(binding.nobel.text.toString()  )
+                    list.remove(binding.nobel.text.toString())
                 }
             }
         }
+        }
+
     }
 
 
-}
+
 
